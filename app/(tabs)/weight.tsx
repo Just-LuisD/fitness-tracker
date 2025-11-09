@@ -1,11 +1,11 @@
 import { StyleSheet, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-export default function Dashboard() {
+export default function Weight() {
   return (
     <SafeAreaProvider style={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
-      <Text>Welcome to your personal coach app 🔥</Text>
+      <Text style={styles.title}>Weight</Text>
+      <Text>Track daily weight and see your trends</Text>
     </SafeAreaProvider>
   );
 }
