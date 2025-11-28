@@ -1,13 +1,17 @@
+import { UnitToggle } from "@/src/components/ui/UnitToggle";
 import {
   addWeightEntry,
   deleteWeightEntry,
   getWeightEntries,
   updateWeightEntry,
 } from "@/src/services/weightService";
+import { convertWeight } from "@/src/utils/weightConversion";
+import { useFont } from "@shopify/react-native-skia";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
+  KeyboardAvoidingView,
   Modal,
   StyleSheet,
   Text,
@@ -16,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { CartesianChart, Line, Scatter } from "victory-native";
 
 export default function WeightScreen() {
   const db = useSQLiteContext();
@@ -25,6 +30,7 @@ export default function WeightScreen() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [value, setValue] = useState("");
   const [unit, setUnit] = useState<"lb" | "kg">("lb");
+  const [displayUnit, setDisplayUnit] = useState<"lb" | "kg">("lb");
 
   async function load() {
     const data = await getWeightEntries(db);
@@ -70,34 +76,103 @@ export default function WeightScreen() {
     }
   }
 
+  function toggleUnit() {
+    setDisplayUnit((prev) => (prev === "lb" ? "kg" : "lb"));
+  }
+
+  const data = entries
+    .map((entry) => ({
+      day: new Date(entry.date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+      y: convertWeight(entry.weight, entry.unit, displayUnit),
+    }))
+    .reverse();
+
+  let weightList;
+  if (entries.length === 0) {
+    weightList = (
+      <Text style={styles.noEntriesText}>No weight entries yet.</Text>
+    );
+  } else {
+    weightList = (
+      <FlatList
+        data={entries}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ paddingVertical: 12 }}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.entry}
+            onPress={() => openEditModal(item)}
+          >
+            <Text style={styles.entryValue}>
+              {convertWeight(item.weight, item.unit, displayUnit).toFixed(2)}{" "}
+              {displayUnit}
+            </Text>
+            <Text style={styles.entryDate}>
+              {new Date(item.date).toLocaleDateString()}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
+    );
+  }
+
+  const font = useFont(require("../../assets/fonts/Inter_18pt-Medium.ttf"), 12);
+  let chart;
+
+  if (!font || entries.length === 0) {
+    chart = null;
+  } else {
+    chart = (
+      <View style={{ height: 350 }}>
+        <CartesianChart
+          data={data}
+          xKey="day"
+          yKeys={["y"]}
+          domainPadding={{ left: 12, right: 12, top: 12, bottom: 12 }}
+          xAxis={{}}
+          yAxis={[
+            {
+              font: font,
+              formatYLabel: (v) => `${v} ${displayUnit}`, // or e.g. `${v} lbs`
+              labelColor: "#555",
+            },
+          ]}
+        >
+          {({ points }) => (
+            // 👇 and we'll use the Line component to render a line path.
+            <>
+              <Line points={points.y} color="#000" strokeWidth={2} />
+              <Scatter points={points.y} color="black" radius={5} />
+            </>
+          )}
+        </CartesianChart>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaProvider style={styles.container}>
       <View style={styles.container}>
+        {chart}
+        {entries.length > 0 && (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            <UnitToggle value={displayUnit} onChange={setDisplayUnit} />
+          </View>
+        )}
+        {weightList}
         <TouchableOpacity style={styles.addBtn} onPress={openAddModal}>
           <Text style={styles.addBtnText}>+ Add Weight</Text>
         </TouchableOpacity>
-
-        <FlatList
-          data={entries}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={{ paddingVertical: 12 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.entry}
-              onPress={() => openEditModal(item)}
-            >
-              <Text style={styles.entryValue}>
-                {item.weight} {item.unit}
-              </Text>
-              <Text style={styles.entryDate}>
-                {new Date(item.date).toLocaleDateString()}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
-
         <Modal visible={modalVisible} transparent animationType="slide">
-          <View style={styles.modalBg}>
+          <KeyboardAvoidingView style={styles.modalBg}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>
                 {editingId ? "Edit Entry" : "Add Entry"}
@@ -149,7 +224,7 @@ export default function WeightScreen() {
                 </TouchableOpacity>
               )}
             </View>
-          </View>
+          </KeyboardAvoidingView>
         </Modal>
       </View>
     </SafeAreaProvider>
@@ -157,26 +232,26 @@ export default function WeightScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
+  container: { flex: 1, padding: 12 },
   addBtn: {
     backgroundColor: "#000",
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 2,
   },
   addBtnText: { color: "#fff", fontWeight: "bold" },
   entry: {
     padding: 16,
     backgroundColor: "#f2f2f2",
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   entryValue: { fontSize: 18, fontWeight: "bold" },
   entryDate: { color: "#555" },
   modalBg: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     paddingHorizontal: 20,
   },
@@ -227,4 +302,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   deleteBtnText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
+  noEntriesText: {
+    textAlign: "center",
+    textAlignVertical: "center",
+    marginTop: 20,
+    color: "#555",
+    flex: 1,
+  },
 });
