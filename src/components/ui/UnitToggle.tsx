@@ -14,13 +14,12 @@ interface Props {
 export function UnitToggle({ value, onChange }: Props) {
   const knobPosition = useSharedValue(value === "kg" ? 0 : 1);
 
-  // Animate knob when the prop changes
   React.useEffect(() => {
     knobPosition.value = withSpring(value === "kg" ? 0 : 1, {
       damping: 80,
       stiffness: 700,
     });
-  }, [value]);
+  }, [knobPosition, value]);
 
   const animatedKnob = useAnimatedStyle(() => ({
     transform: [
