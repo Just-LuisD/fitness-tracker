@@ -1,5 +1,9 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { TrainingProgram, WorkoutTemplate } from "../database/types";
+import {
+  ExerciseTemplate,
+  TrainingProgram,
+  WorkoutTemplate,
+} from "../database/types";
 
 export async function getTrainingPrograms(db: SQLiteDatabase) {
   return db.getAllAsync("SELECT * FROM training_programs");
@@ -47,7 +51,7 @@ export async function deactivateAllPrograms(db: SQLiteDatabase, id: number) {
   );
 }
 
-export async function getTrainingProgramWorkouts(
+export async function getWorkoutTemplates(
   db: SQLiteDatabase,
   program_id: number
 ) {
@@ -57,7 +61,7 @@ export async function getTrainingProgramWorkouts(
   );
 }
 
-export async function addWorkout(
+export async function addWorkoutTemplate(
   db: SQLiteDatabase,
   { program_id, workout_number, name }: WorkoutTemplate
 ) {
@@ -69,7 +73,7 @@ export async function addWorkout(
   );
 }
 
-export async function updateWorkout(
+export async function updateWorkoutTemplate(
   db: SQLiteDatabase,
   { id, program_id, workout_number, name }: WorkoutTemplate
 ) {
@@ -82,6 +86,62 @@ export async function updateWorkout(
   );
 }
 
-export async function deleteWorkout(db: SQLiteDatabase, id: number) {
+export async function deleteWorkoutTemplate(db: SQLiteDatabase, id: number) {
   await db.runAsync("DELETE FROM workout_templates WHERE id = ?", id);
+}
+
+export async function getExerciseTemplates(
+  db: SQLiteDatabase,
+  workout_template_id: number
+) {
+  return await db.getAllAsync(
+    "SELECT * FROM exercise_templates WHERE workout_template_id = ?",
+    workout_template_id
+  );
+}
+
+export async function addExerciseTemplate(
+  db: SQLiteDatabase,
+  {
+    workout_template_id,
+    name,
+    default_sets,
+    default_reps,
+    order_index,
+  }: ExerciseTemplate
+) {
+  await db.runAsync(
+    "INSERT INTO exercise_templates (workout_template_id, name, default_sets, default_reps, order_index) (?,?,?,?,?)",
+    workout_template_id,
+    name,
+    default_sets,
+    default_reps,
+    order_index
+  );
+}
+
+export async function updateExerciseTemplate(
+  db: SQLiteDatabase,
+  {
+    id,
+    workout_template_id,
+    name,
+    default_sets,
+    default_reps,
+    order_index,
+  }: ExerciseTemplate
+) {
+  await db.runAsync(
+    "UPDATE exercise_templates SET workout_template_id = ?, name = ?, default_sets = ? default_reps = ?, order_index = ? WHERE id = ?",
+    workout_template_id,
+    name,
+    default_sets,
+    default_reps,
+    order_index,
+    id
+  );
+}
+
+export async function deleteExcerciseTemplate(db: SQLiteDatabase, id: number) {
+  await db.runAsync("DELETE FROM exercise_templates WHERE id = ?", id);
 }
