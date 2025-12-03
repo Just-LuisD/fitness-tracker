@@ -145,3 +145,14 @@ export async function updateExerciseTemplate(
 export async function deleteExcerciseTemplate(db: SQLiteDatabase, id: number) {
   await db.runAsync("DELETE FROM exercise_templates WHERE id = ?", id);
 }
+
+export async function getLoggedWorkouts() {}
+export async function getLoggedWorkout() {}
+export async function addLoggedWorkout() {}
+export async function updateLoggedWorkout() {}
+export async function deleteLoggedWorkout() {}
+
+export async function getLoggedExercises() {}
+export async function addLoggedExercise() {}
+export async function updateLoggedExercise() {}
+export async function deleteLoggedExercise() {}
