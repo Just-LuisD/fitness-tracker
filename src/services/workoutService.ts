@@ -1,6 +1,7 @@
 import { SQLiteDatabase } from "expo-sqlite";
 import {
   ExerciseTemplate,
+  LoggedWorkout,
   TrainingProgram,
   WorkoutTemplate,
 } from "../database/types";
@@ -146,11 +147,51 @@ export async function deleteExcerciseTemplate(db: SQLiteDatabase, id: number) {
   await db.runAsync("DELETE FROM exercise_templates WHERE id = ?", id);
 }
 
-export async function getLoggedWorkouts() {}
-export async function getLoggedWorkout() {}
-export async function addLoggedWorkout() {}
-export async function updateLoggedWorkout() {}
-export async function deleteLoggedWorkout() {}
+export async function getLoggedWorkouts(
+  db: SQLiteDatabase,
+  workout_template_id: number
+) {
+  return await db.getAllAsync(
+    "SELECT * FROM logged_workouts WHERE workout_template_id = ?",
+    workout_template_id
+  );
+}
+
+export async function getLoggedWorkout(db: SQLiteDatabase, id: number) {
+  return await db.getAllAsync(
+    "SELECT * FROM logged_workouts WHERE id = ? LIMIT 1",
+    id
+  );
+}
+
+export async function addLoggedWorkout(
+  db: SQLiteDatabase,
+  { date, notes, workout_template_id }: LoggedWorkout
+) {
+  await db.runAsync(
+    "INSERT INTO logged_workouts (date, notes, workout_template_id) (?,?,?)",
+    date,
+    notes ?? null,
+    workout_template_id
+  );
+}
+
+export async function updateLoggedWorkout(
+  db: SQLiteDatabase,
+  { id, date, notes, workout_template_id }: LoggedWorkout
+) {
+  await db.runAsync(
+    "UPDATE logged_workouts SET date = ?, notes = ?, workout_template_id = ? WHERE id = ?",
+    date,
+    notes ?? null,
+    workout_template_id,
+    id
+  );
+}
+
+export async function deleteLoggedWorkout(db: SQLiteDatabase, id: number) {
+  await db.runAsync("DELETE FROM logged_workouts WHERE id = ?", id);
+}
 
 export async function getLoggedExercises() {}
 export async function addLoggedExercise() {}
