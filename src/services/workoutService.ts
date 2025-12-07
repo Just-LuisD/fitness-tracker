@@ -12,7 +12,7 @@ export async function getTrainingPrograms(db: SQLiteDatabase) {
 }
 
 export async function getActiveTrainingProgram(db: SQLiteDatabase) {
-  return db.runAsync(
+  return db.getFirstAsync(
     "SELECT * FROM training_programs WHERE is_active = 1 LIMIT 1"
   );
 }
@@ -22,7 +22,7 @@ export async function addTrainingProgram(
   { name, start_date, is_active }: TrainingProgram
 ) {
   await db.runAsync(
-    "INSERT INTO training_programs (name, start_date, is_active) (?,?,?)",
+    "INSERT INTO training_programs (name, start_date, is_active) VALUES (?,?,?)",
     name,
     start_date,
     is_active
@@ -46,7 +46,10 @@ export async function deleteTrainingProgram(db: SQLiteDatabase, id: number) {
   await db.runAsync("DELETE FROM training_programs WHERE id = ?", id);
 }
 
-export async function deactivateAllPrograms(db: SQLiteDatabase, id: number) {
+export async function deactivateAllOtherPrograms(
+  db: SQLiteDatabase,
+  id: number
+) {
   await db.runAsync(
     "UPDATE training_programs SET is_active = 0 WHERE id != ?",
     id
@@ -58,7 +61,7 @@ export async function getWorkoutTemplates(
   program_id: number
 ) {
   return await db.getAllAsync(
-    "SELECT * FROM workout_templates WHERE program_id = ?",
+    "SELECT * FROM workout_templates WHERE program_id = ? ORDER BY workout_number ASC",
     program_id
   );
 }
@@ -68,7 +71,7 @@ export async function addWorkoutTemplate(
   { program_id, workout_number, name }: WorkoutTemplate
 ) {
   await db.runAsync(
-    "INSERT INTO workout_templates (program_id, workout_number, name) (?,?,?)",
+    "INSERT INTO workout_templates (program_id, workout_number, name) VALUES (?,?,?)",
     program_id,
     workout_number,
     name
@@ -97,7 +100,7 @@ export async function getExerciseTemplates(
   workout_template_id: number
 ) {
   return await db.getAllAsync(
-    "SELECT * FROM exercise_templates WHERE workout_template_id = ?",
+    "SELECT * FROM exercise_templates WHERE workout_template_id = ? ORDER BY order_index ASC",
     workout_template_id
   );
 }
@@ -113,7 +116,7 @@ export async function addExerciseTemplate(
   }: ExerciseTemplate
 ) {
   await db.runAsync(
-    "INSERT INTO exercise_templates (workout_template_id, name, default_sets, default_reps, order_index) (?,?,?,?,?)",
+    "INSERT INTO exercise_templates (workout_template_id, name, default_sets, default_reps, order_index) VALUES (?,?,?,?,?)",
     workout_template_id,
     name,
     default_sets,
@@ -134,7 +137,7 @@ export async function updateExerciseTemplate(
   }: ExerciseTemplate
 ) {
   await db.runAsync(
-    "UPDATE exercise_templates SET workout_template_id = ?, name = ?, default_sets = ? default_reps = ?, order_index = ? WHERE id = ?",
+    "UPDATE exercise_templates SET workout_template_id = ?, name = ?, default_sets = ?, default_reps = ?, order_index = ? WHERE id = ?",
     workout_template_id,
     name,
     default_sets,
@@ -144,7 +147,7 @@ export async function updateExerciseTemplate(
   );
 }
 
-export async function deleteExcerciseTemplate(db: SQLiteDatabase, id: number) {
+export async function deleteExerciseTemplate(db: SQLiteDatabase, id: number) {
   await db.runAsync("DELETE FROM exercise_templates WHERE id = ?", id);
 }
 
@@ -153,13 +156,13 @@ export async function getLoggedWorkouts(
   workout_template_id: number
 ) {
   return await db.getAllAsync(
-    "SELECT * FROM logged_workouts WHERE workout_template_id = ?",
+    "SELECT * FROM logged_workouts WHERE workout_template_id = ? ORDER BY date DESC",
     workout_template_id
   );
 }
 
 export async function getLoggedWorkout(db: SQLiteDatabase, id: number) {
-  return await db.getAllAsync(
+  return await db.getFirstAsync(
     "SELECT * FROM logged_workouts WHERE id = ? LIMIT 1",
     id
   );
@@ -170,7 +173,7 @@ export async function addLoggedWorkout(
   { date, notes, workout_template_id }: LoggedWorkout
 ) {
   await db.runAsync(
-    "INSERT INTO logged_workouts (date, notes, workout_template_id) (?,?,?)",
+    "INSERT INTO logged_workouts (date, notes, workout_template_id) VALUES (?,?,?)",
     date,
     notes ?? null,
     workout_template_id
@@ -199,7 +202,7 @@ export async function getLoggedExercises(
   logged_workout_id: number
 ) {
   return await db.getAllAsync(
-    "SELECT * FROM logged_exercises WHERE logged_workoout_id = ?",
+    "SELECT * FROM logged_exercises WHERE logged_workout_id = ?",
     logged_workout_id
   );
 }
@@ -209,7 +212,7 @@ export async function addLoggedExercise(
   { logged_workout_id, name, sets, reps, weight, order_index }: LoggedExercise
 ) {
   await db.runAsync(
-    "INSERT INTO logged_exercises (logged_workout_id, name, sets, reps, weight, order_index) (?,?,?,?,?,?)",
+    "INSERT INTO logged_exercises (logged_workout_id, name, sets, reps, weight, order_index) VALUES (?,?,?,?,?,?)",
     logged_workout_id,
     name,
     sets,
@@ -232,7 +235,7 @@ export async function updateLoggedExercise(
   }: LoggedExercise
 ) {
   await db.runAsync(
-    "UPDATE looged_excercises logged_workout_id = ?, name = ?, sers = ?, reps = ?, weight = ?, order_index = ? WHERE id = ?",
+    "UPDATE logged_exercises SET logged_workout_id = ?, name = ?, sets = ?, reps = ?, weight = ?, order_index = ? WHERE id = ?",
     logged_workout_id,
     name,
     sets,
