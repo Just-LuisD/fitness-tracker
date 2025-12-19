@@ -19,7 +19,9 @@ export async function getActiveTrainingProgram(db: SQLiteDatabase) {
 
 export async function addTrainingProgram(
   db: SQLiteDatabase,
-  { name, start_date, is_active }: TrainingProgram
+  name: string,
+  start_date: string,
+  is_active: 0 | 1
 ) {
   await db.runAsync(
     "INSERT INTO training_programs (name, start_date, is_active) VALUES (?,?,?)",
