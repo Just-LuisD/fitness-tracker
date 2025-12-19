@@ -86,7 +86,7 @@ export default function WeightScreen() {
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "flex-end",
+              justifyContent: "flex-start",
             }}
           >
             <UnitToggle value={displayUnit} onChange={setDisplayUnit} />
