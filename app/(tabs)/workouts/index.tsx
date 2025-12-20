@@ -1,11 +1,13 @@
 import { TrainingProgramList } from "@/src/components/ui/TrainingProgramList";
 import { TrainingProgramModal } from "@/src/components/ui/TrainingProgramModal";
+import { TrainingProgram } from "@/src/database/types";
 import {
   addTrainingProgram,
   getTrainingPrograms,
 } from "@/src/services/workoutService";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -17,15 +19,18 @@ export default function Workouts() {
   const [programName, setProgramName] = useState("");
   const [programStartDate, setProgramStartDate] = useState(new Date());
   const [isProgramActive, setIsProgramActive] = useState<0 | 1>(0);
+  const router = useRouter();
 
   async function load() {
     const data = await getTrainingPrograms(db);
     setTrainingPrograms(data);
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [])
+  );
 
   function openAddModal() {
     setProgramName("");
@@ -48,12 +53,16 @@ export default function Workouts() {
     load();
   }
 
+  function handleTrainingProgramPress(program: TrainingProgram) {
+    router.push({ pathname: "/workouts/[id]", params: { id: program.id } });
+  }
+
   return (
     <SafeAreaProvider style={styles.container}>
       <View style={styles.container}>
         <TrainingProgramList
           entries={trainingPrograms}
-          onPressEntry={() => {}}
+          onPressEntry={handleTrainingProgramPress}
         ></TrainingProgramList>
       </View>
       <TouchableOpacity style={styles.addBtn} onPress={openAddModal}>

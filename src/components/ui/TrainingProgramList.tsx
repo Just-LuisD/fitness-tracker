@@ -18,7 +18,9 @@ export function TrainingProgramList({ entries, onPressEntry }: Props) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.entry, item.is_active === 1 && styles.activeEntry]}
-            onPress={() => onPressEntry(item)}
+            onPress={() => {
+              onPressEntry(item);
+            }}
           >
             <Text style={styles.entryValue}>{item.name}</Text>
             <Text style={styles.entryDate}>

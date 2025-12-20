@@ -70,7 +70,9 @@ export async function getWorkoutTemplates(
 
 export async function addWorkoutTemplate(
   db: SQLiteDatabase,
-  { program_id, workout_number, name }: WorkoutTemplate
+  program_id: number,
+  workout_number: number,
+  name: string
 ) {
   await db.runAsync(
     "INSERT INTO workout_templates (program_id, workout_number, name) VALUES (?,?,?)",
