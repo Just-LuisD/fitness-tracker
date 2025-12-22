@@ -53,6 +53,7 @@ export function TrainingProgramModal({
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Add Training Program</Text>
 
+          {/* TODO: Input text is white on a white background on my phone, fix this. */}
           <TextInput
             placeholder="Name"
             onChangeText={setName}

@@ -1,4 +1,4 @@
-import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -11,6 +11,7 @@ interface Props {
   value: string;
   onChangeText: (text: string) => void;
   onSubmit: (name: string) => void;
+  onCancel: () => void;
 }
 
 export default function CustomTextInput({
@@ -18,6 +19,7 @@ export default function CustomTextInput({
   value,
   onChangeText,
   onSubmit,
+  onCancel,
 }: Props) {
   /*
   TODO: Make this work for different screen sizes and keyboard heights
@@ -44,10 +46,13 @@ export default function CustomTextInput({
         onChangeText={onChangeText}
       />
       <TouchableOpacity
-        style={styles.submitBtn}
+        style={styles.actionBtn}
         onPress={() => onSubmit(value)}
       >
-        <AntDesign name="check-circle" size={24} color="black" />
+        <MaterialIcons name="check" size={24} color="black" />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.actionBtn} onPress={onCancel}>
+        <MaterialIcons name="cancel" size={24} color="black" />
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
@@ -56,7 +61,7 @@ export default function CustomTextInput({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    width: "80%",
+    width: "90%",
     marginVertical: 10,
     alignItems: "center",
   },
@@ -71,7 +76,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "black",
   },
-  submitBtn: {
+  actionBtn: {
     marginVertical: "auto",
+    marginHorizontal: 2,
   },
 });

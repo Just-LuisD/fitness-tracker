@@ -33,7 +33,7 @@ export default function WorkoutDetailsScreen() {
     Map<number, ExerciseTemplate[]>
   >(new Map());
   const [addingWorkoutTemplate, setAddingWorkoutTemplate] = useState(false);
-  const [newWorknoutName, setNewWorkoutName] = useState("");
+  const [newWorkoutName, setNewWorkoutName] = useState("");
   const [addingExerciseTemplate, setAddingExerciseTemplate] = useState(false);
   const [newExerciseWorkoutId, setNewExerciseWorkoutId] = useState(0);
   const [newExerciseName, setNewExerciseName] = useState("");
@@ -79,8 +79,12 @@ export default function WorkoutDetailsScreen() {
       workoutTemplates.length + 1,
       name
     );
-    setAddingWorkoutTemplate(false);
+    setNewWorkoutName("");
     load();
+  }
+
+  function closeAddWorkoutTemplateInput() {
+    setAddingWorkoutTemplate(false);
   }
 
   async function handleDeleteWorkoutTemplate(id: number) {
@@ -126,9 +130,10 @@ export default function WorkoutDetailsScreen() {
       {addingWorkoutTemplate && (
         <CustomTextInput
           placeholder="Name"
-          value={newWorknoutName}
+          value={newWorkoutName}
           onChangeText={setNewWorkoutName}
-          onSubmit={() => addNewWorkoutTemplate(newWorknoutName)}
+          onSubmit={() => addNewWorkoutTemplate(newWorkoutName)}
+          onCancel={closeAddWorkoutTemplateInput}
         />
       )}
 
