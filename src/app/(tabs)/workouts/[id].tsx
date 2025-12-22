@@ -1,9 +1,11 @@
+import CustomTextInput from "@/src/components/CustomTextInput";
 import {
   ExerciseTemplate,
   TrainingProgram,
   WorkoutTemplate,
 } from "@/src/database/types";
 import { ExerciseTemplateModal } from "@/src/features/trainingPrograms/components/ExerciseTemplateModal";
+import WorkoutTemplateList from "@/src/features/trainingPrograms/components/WorkoutTemplateList";
 import {
   addExerciseTemplate,
   addWorkoutTemplate,
@@ -13,20 +15,10 @@ import {
   getTrainingProgram,
   getWorkoutTemplates,
 } from "@/src/features/trainingPrograms/services/workoutService";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function WorkoutDetailsScreen() {
   const params = useLocalSearchParams<{ id: string }>();
@@ -120,57 +112,26 @@ export default function WorkoutDetailsScreen() {
       <Text>{trainingProgram?.name}</Text>
       <Text>{trainingProgram?.start_date}</Text>
 
-      {/* Workout templates */}
-      <FlatList
-        data={workoutTemplates}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              {item.name} {item.workout_number}
-            </Text>
-            <Pressable onPress={() => handleDeleteWorkoutTemplate(item.id)}>
-              <MaterialIcons name="delete" size={24} color="black" />
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                setAddingExerciseTemplate(true);
-                setNewExerciseWorkoutId(item.id);
-                setNewExerciseName("");
-                setNewExerciseSets(0);
-                setNewExerciseReps(0);
-              }}
-            >
-              <MaterialIcons name="add" size={24} color="black" />
-            </Pressable>
-            {exerciseTemplates.get(item.id)?.map((exerciseTemplate, index) => (
-              <View key={index}>
-                <Text>{exerciseTemplate.name}</Text>
-                <Text>{exerciseTemplate.default_sets}</Text>
-                <Text>{exerciseTemplate.default_reps}</Text>
-              </View>
-            ))}
-            {exerciseTemplates.get(item.id)?.length === 0 && (
-              <Text>No exercises added yet</Text>
-            )}
-          </View>
-        )}
+      <WorkoutTemplateList
+        workoutTemplates={workoutTemplates}
+        exerciseTemplates={exerciseTemplates}
+        onDeleteWorkoutTemplate={handleDeleteWorkoutTemplate}
+        setAddingExerciseTemplate={setAddingExerciseTemplate}
+        setNewExerciseWorkoutId={setNewExerciseWorkoutId}
+        setNewExerciseName={setNewExerciseName}
+        setNewExerciseSets={setNewExerciseSets}
+        setNewExerciseReps={setNewExerciseReps}
       />
 
       {addingWorkoutTemplate && (
-        <View>
-          <TextInput
-            placeholder="Name"
-            value={newWorknoutName}
-            onChangeText={setNewWorkoutName}
-          />
-          <TouchableOpacity
-            onPress={() => addNewWorkoutTemplate(newWorknoutName)}
-          >
-            <AntDesign name="check-circle" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
+        <CustomTextInput
+          placeholder="Name"
+          value={newWorknoutName}
+          onChangeText={setNewWorkoutName}
+          onSubmit={() => addNewWorkoutTemplate(newWorknoutName)}
+        />
       )}
+
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => {
