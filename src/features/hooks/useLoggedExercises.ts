@@ -1,6 +1,6 @@
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useEffect, useState } from "react";
-import type { LoggedExercise } from "../database/types";
+import type { LoggedExercise } from "../../database/types";
 
 /**
  * useLoggedExercises(loggedWorkoutId) - manage exercises for a logged workout

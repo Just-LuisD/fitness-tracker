@@ -5,7 +5,7 @@ import {
   LoggedWorkout,
   TrainingProgram,
   WorkoutTemplate,
-} from "../database/types";
+} from "../../../database/types";
 
 export async function getTrainingPrograms(db: SQLiteDatabase) {
   return db.getAllAsync("SELECT * FROM training_programs");

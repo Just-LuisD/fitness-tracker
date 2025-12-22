@@ -1,13 +1,13 @@
-import { WeightScatterPlot } from "@/src/components/charts/WeightScatterPlot";
-import { UnitToggle } from "@/src/components/ui/UnitToggle";
-import { WeightEntryModal } from "@/src/components/ui/WeightEntryModal";
-import { WeightList } from "@/src/components/ui/WeightList";
+import { UnitToggle } from "@/src/components/UnitToggle";
+import { WeightEntryModal } from "@/src/features/weightTracking/components/WeightEntryModal";
+import { WeightList } from "@/src/features/weightTracking/components/WeightList";
+import { WeightScatterPlot } from "@/src/features/weightTracking/components/WeightScatterPlot";
 import {
   addWeightEntry,
   deleteWeightEntry,
   getWeightEntries,
   updateWeightEntry,
-} from "@/src/services/weightService";
+} from "@/src/features/weightTracking/services/weightService";
 import { convertWeight } from "@/src/utils/weightConversion";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";

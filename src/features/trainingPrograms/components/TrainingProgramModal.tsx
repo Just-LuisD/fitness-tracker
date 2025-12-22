@@ -1,3 +1,4 @@
+import { SelectableToggle } from "@/src/components/SelectableToggle";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -12,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SelectableToggle } from "./SelectableToggle";
 
 interface Props {
   isVisible: boolean;

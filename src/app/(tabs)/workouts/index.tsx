@@ -1,10 +1,10 @@
-import { TrainingProgramList } from "@/src/components/ui/TrainingProgramList";
-import { TrainingProgramModal } from "@/src/components/ui/TrainingProgramModal";
 import { TrainingProgram } from "@/src/database/types";
+import { TrainingProgramList } from "@/src/features/trainingPrograms/components/TrainingProgramList";
+import { TrainingProgramModal } from "@/src/features/trainingPrograms/components/TrainingProgramModal";
 import {
   addTrainingProgram,
   getTrainingPrograms,
-} from "@/src/services/workoutService";
+} from "@/src/features/trainingPrograms/services/workoutService";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
@@ -54,7 +54,7 @@ export default function Workouts() {
   }
 
   function handleTrainingProgramPress(program: TrainingProgram) {
-    router.push({ pathname: "./(tabs)/workouts/[id]", params: { id: program.id } });
+    router.push({ pathname: "/workouts/[id]", params: { id: program.id } });
   }
 
   return (

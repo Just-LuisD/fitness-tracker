@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function WeightScatterPlot({ data, displayUnit }: Props) {
-  const font = useFont(require("../../assets/fonts/Inter_18pt-Medium.ttf"), 12);
+  const font = useFont(require("@/src/assets/fonts/Inter_18pt-Medium.ttf"), 12);
 
   if (!font || data.length === 0) {
     return null;

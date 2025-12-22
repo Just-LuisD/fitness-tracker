@@ -1,9 +1,9 @@
-import { ExerciseTemplateModal } from "@/src/components/ui/ExerciseTemplateModal";
 import {
   ExerciseTemplate,
   TrainingProgram,
   WorkoutTemplate,
 } from "@/src/database/types";
+import { ExerciseTemplateModal } from "@/src/features/trainingPrograms/components/ExerciseTemplateModal";
 import {
   addExerciseTemplate,
   addWorkoutTemplate,
@@ -12,7 +12,7 @@ import {
   getExerciseTemplates,
   getTrainingProgram,
   getWorkoutTemplates,
-} from "@/src/services/workoutService";
+} from "@/src/features/trainingPrograms/services/workoutService";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useLocalSearchParams, useRouter } from "expo-router";
