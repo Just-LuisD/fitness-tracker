@@ -54,7 +54,7 @@ export default function Workouts() {
   }
 
   function handleTrainingProgramPress(program: TrainingProgram) {
-    router.push({ pathname: "/workouts/[id]", params: { id: program.id } });
+    router.push({ pathname: "./(tabs)/workouts/[id]", params: { id: program.id } });
   }
 
   return (
