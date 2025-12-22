@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     marginHorizontal: 10,
+    padding: 10,
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,
