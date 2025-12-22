@@ -1,9 +1,11 @@
+import { ExerciseTemplateModal } from "@/src/components/ui/ExerciseTemplateModal";
 import {
   ExerciseTemplate,
   TrainingProgram,
   WorkoutTemplate,
 } from "@/src/database/types";
 import {
+  addExerciseTemplate,
   addWorkoutTemplate,
   deleteTrainingProgram,
   deleteWorkoutTemplate,
@@ -40,6 +42,11 @@ export default function WorkoutDetailsScreen() {
   >(new Map());
   const [addingWorkoutTemplate, setAddingWorkoutTemplate] = useState(false);
   const [newWorknoutName, setNewWorkoutName] = useState("");
+  const [addingExerciseTemplate, setAddingExerciseTemplate] = useState(false);
+  const [newExerciseWorkoutId, setNewExerciseWorkoutId] = useState(0);
+  const [newExerciseName, setNewExerciseName] = useState("");
+  const [newExerciseSets, setNewExerciseSets] = useState(0);
+  const [newExerciseReps, setNewExerciseReps] = useState(0);
 
   async function deleteWorkout() {
     await deleteTrainingProgram(db, parseInt(params.id));
@@ -89,6 +96,22 @@ export default function WorkoutDetailsScreen() {
     load();
   }
 
+  async function addNewExerciseTemplate() {
+    if (newExerciseName === "") return;
+    if (newExerciseSets === 0 || newExerciseReps === 0) return;
+    const index = exerciseTemplates.get(newExerciseWorkoutId)?.length || 0;
+    await addExerciseTemplate(
+      db,
+      newExerciseWorkoutId,
+      newExerciseName,
+      newExerciseSets,
+      newExerciseReps,
+      index
+    );
+    setAddingExerciseTemplate(false);
+    load();
+  }
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       {/* Training program info */}
@@ -108,6 +131,17 @@ export default function WorkoutDetailsScreen() {
             </Text>
             <Pressable onPress={() => handleDeleteWorkoutTemplate(item.id)}>
               <MaterialIcons name="delete" size={24} color="black" />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setAddingExerciseTemplate(true);
+                setNewExerciseWorkoutId(item.id);
+                setNewExerciseName("");
+                setNewExerciseSets(0);
+                setNewExerciseReps(0);
+              }}
+            >
+              <MaterialIcons name="add" size={24} color="black" />
             </Pressable>
             {exerciseTemplates.get(item.id)?.map((exerciseTemplate, index) => (
               <View key={index}>
@@ -149,6 +183,17 @@ export default function WorkoutDetailsScreen() {
       <TouchableOpacity style={styles.addBtn} onPress={deleteWorkout}>
         <Text style={styles.addBtnText}>Delete Trainig Program</Text>
       </TouchableOpacity>
+
+      {addingExerciseTemplate && (
+        <ExerciseTemplateModal
+          visible={addingExerciseTemplate}
+          onClose={() => setAddingExerciseTemplate(false)}
+          onSave={addNewExerciseTemplate}
+          setName={setNewExerciseName}
+          setSets={(sets) => setNewExerciseSets(parseInt(sets))}
+          setReps={(reps) => setNewExerciseReps(parseInt(reps))}
+        />
+      )}
     </View>
   );
 }

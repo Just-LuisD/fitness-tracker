@@ -11,6 +11,13 @@ export async function getTrainingPrograms(db: SQLiteDatabase) {
   return db.getAllAsync("SELECT * FROM training_programs");
 }
 
+export async function getTrainingProgram(db: SQLiteDatabase, id: number) {
+  return db.getFirstAsync(
+    "SELECT * FROM training_programs WHERE id = ? LIMIT 1",
+    id
+  );
+}
+
 export async function getActiveTrainingProgram(db: SQLiteDatabase) {
   return db.getFirstAsync(
     "SELECT * FROM training_programs WHERE is_active = 1 LIMIT 1"
@@ -111,13 +118,11 @@ export async function getExerciseTemplates(
 
 export async function addExerciseTemplate(
   db: SQLiteDatabase,
-  {
-    workout_template_id,
-    name,
-    default_sets,
-    default_reps,
-    order_index,
-  }: ExerciseTemplate
+  workout_template_id: number,
+  name: string,
+  default_sets: number,
+  default_reps: number,
+  order_index: number
 ) {
   await db.runAsync(
     "INSERT INTO exercise_templates (workout_template_id, name, default_sets, default_reps, order_index) VALUES (?,?,?,?,?)",
