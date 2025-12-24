@@ -68,9 +68,13 @@ function WorkoutTemplateListItem({
   return (
     <View style={styles.listItem}>
       <View style={styles.listItemHeader}>
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+        <Text style={styles.listItemHeaderText} numberOfLines={1}>
           {`Day ${item.workout_number}: ${item.name}`}
         </Text>
+        <Pressable onPress={() => {}}>
+          <MaterialIcons name="more-vert" size={24} color="black" />
+        </Pressable>
+        {/*
         <Pressable onPress={() => onDeleteWorkoutTemplate(item.id)}>
           <MaterialIcons name="delete" size={24} color="black" />
         </Pressable>
@@ -85,6 +89,7 @@ function WorkoutTemplateListItem({
         >
           <MaterialIcons name="add" size={24} color="black" />
         </Pressable>
+        */}
       </View>
       {exerciseTemplates.map((exerciseTemplate, index) => (
         <View key={index}>
@@ -103,8 +108,12 @@ const styles = StyleSheet.create({
   listItem: {},
   listItemHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    alignContent: "center",
+  },
+  listItemHeaderText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    flex: 1,
   },
   listItemBody: {},
 });

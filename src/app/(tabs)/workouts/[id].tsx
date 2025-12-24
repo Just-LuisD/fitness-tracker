@@ -109,7 +109,7 @@ export default function WorkoutDetailsScreen() {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <View style={styles.container}>
       {/* Training program info */}
       <Text>Workout Details Screen</Text>
       <Text>{params.id}</Text>
